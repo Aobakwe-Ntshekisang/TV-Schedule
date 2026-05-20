@@ -30,5 +30,11 @@ class TvSchedule
                 Console.WriteLine(ln);
         }
         Console.WriteLine();
+
+        //for large files
+        using StreamReader reader = new StreamReader("path/to/file.txt");
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+          Console.WriteLine(line);
   }
 }
