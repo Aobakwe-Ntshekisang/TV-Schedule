@@ -1,40 +1,146 @@
-using System:
+using System;
 using System.IO;
+using System.Collections.Generic;
 
 class TvSchedule
 {
-  static void Main(string[] args)
-  {
-    // Store the path of the textfile in your system
-    string file = @"C://documents/whatnot"; //on the computer
+    static void Main(string[] args)
+    {
+        string file = @"C:\Users\School\OneDrive - University of Botswana\Desktop\TV Program\TvSchedule\shows.txt";
 
-            Console.WriteLine("Reading File using File.ReadAllText()");
-
-        // To read the entire file at once
-        if (File.Exists(file)) {
-            // Read all the content in one string
-            // and display the string
-            string str = File.ReadAllText(file);
-            Console.WriteLine(str);
+        if (!File.Exists(file))
+        {
+            Console.WriteLine("File not found!");
+            return;
         }
-        Console.WriteLine();
 
-        Console.WriteLine("Reading File using File.ReadAllLines()");
+        // Step 1 & 2 — Parse and categorize
+        Dictionary<string, List<Show>> schedule = new Dictionary<string, List<Show>>();
+        List<string> knownCategories = new List<string> { "Movie", "Series", "Anime", "Cartoon" };
+        string currentCategory = "";
+        string[] lines = File.ReadAllLines(file);
 
-        // To read a text file line by line
-        if (File.Exists(file)) {
-            // Store each line in array of strings
-            string[] lines = File.ReadAllLines(file);
+        foreach (string line in lines)
+        {
+            string trimmed = line.Trim();
 
-            foreach(string ln in lines)
-                Console.WriteLine(ln);
+            if (trimmed.StartsWith("#"))
+            {
+                currentCategory = trimmed.Replace("#", "").Trim();
+                schedule[currentCategory] = new List<Show>();
+            }
+            else if (knownCategories.Contains(trimmed))
+            {
+                currentCategory = trimmed;
+                schedule[currentCategory] = new List<Show>();
+            }
+            else if (trimmed != "")
+            {
+                if (currentCategory != "")
+                {
+                    string[] parts = trimmed.Split(',');
+                    Show myShow = new Show()
+                    {
+                        Name = parts[0].Trim(),
+                        EpisodeLength = int.Parse(parts[1].Trim())
+                    };
+                    schedule[currentCategory].Add(myShow);
+                }
+                else
+                {
+                    Console.WriteLine($"Warning: '{trimmed}' has no category, skipping!");
+                }
+            }
         }
-        Console.WriteLine();
 
-        //for large files
-        using StreamReader reader = new StreamReader("path/to/file.txt");
-        string? line;
-        while ((line = reader.ReadLine()) != null)
-          Console.WriteLine(line);
-  }
+        // Step 3 — Separate series and movies
+        List<Show> seriesShows = new List<Show>();
+        List<Show> movieShows = new List<Show>();
+
+        foreach (var category in schedule)
+        {
+            if (category.Key != "Movie")
+                seriesShows.AddRange(category.Value);
+            else if (category.Key == "Movie")
+                movieShows.AddRange(category.Value);
+        }
+
+        // Step 4 — Fixed vs Alternating
+        // Display series list
+        Console.WriteLine("=== Your Series ===");
+        int counter = 1;
+        foreach (Show show in seriesShows)
+        {
+            Console.WriteLine($"{counter}. {show.Name} ({show.EpisodeLength} mins)");
+            counter++;
+        }
+
+        // User picks fixed series
+        Console.WriteLine("\nPick 2 fixed series (enter numbers separated by comma e.g 1,2):");
+        string input = Console.ReadLine();
+        string[] picked = input.Split(',');
+
+        List<Show> fixedSeries = new List<Show>();
+        foreach (string part in picked)
+        {
+            int index = int.Parse(part.Trim()) - 1;
+            fixedSeries.Add(seriesShows[index]);
+        }
+
+        // Build alternating list
+        List<Show> alternatingSeries = new List<Show>();
+        foreach (Show show in seriesShows)
+        {
+            if (!fixedSeries.Contains(show))
+                alternatingSeries.Add(show);
+        }
+
+        // Assign to weekly schedule
+        SortedDictionary<DayOfWeek, Show> weeklySchedule = new SortedDictionary<DayOfWeek, Show>();
+
+        // Fixed series
+        weeklySchedule[DayOfWeek.Monday] = fixedSeries[0];
+        weeklySchedule[DayOfWeek.Tuesday] = fixedSeries[1];
+
+        // Alternating series
+        Random random = new Random();
+
+        int randomIndex = random.Next(0, alternatingSeries.Count);
+        weeklySchedule[DayOfWeek.Wednesday] = alternatingSeries[randomIndex];
+        alternatingSeries.RemoveAt(randomIndex);
+
+        randomIndex = random.Next(0, alternatingSeries.Count);
+        weeklySchedule[DayOfWeek.Thursday] = alternatingSeries[randomIndex];
+        alternatingSeries.RemoveAt(randomIndex);
+
+        // Assign movies
+        int movieIndex = 0;
+        List<DayOfWeek> movieDays = new List<DayOfWeek>
+        {
+            DayOfWeek.Friday,
+            DayOfWeek.Saturday,
+            DayOfWeek.Sunday
+        };
+
+        foreach (DayOfWeek day in movieDays)
+        {
+            if (movieIndex < movieShows.Count)
+            {
+                weeklySchedule[day] = movieShows[movieIndex];
+                movieIndex++;
+            }
+        }
+
+        // Print weekly schedule
+        Console.WriteLine("\n=== This Week's TV Schedule ===");
+        foreach (var entry in weeklySchedule)
+        {
+            Console.WriteLine($"{entry.Key} → {entry.Value.Name} ({entry.Value.EpisodeLength} mins)");
+        }
+    }
 }
+
+public class Show
+{
+    public string Name { get; set; }
+    public int
