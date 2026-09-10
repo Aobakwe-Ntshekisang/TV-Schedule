@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -144,4 +145,152 @@ public class Show
 {
     public string Name { get; set; }
     public int EpisodeLength { get; set; }
+=======
+using System;
+using System.IO;
+using System.Collections.Generic;
+
+class TvSchedule
+{
+    static void Main(string[] args)
+    {
+        string file = @"C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\shows.txt";
+
+        if (!File.Exists(file))
+        {
+            Console.WriteLine("File not found!");
+            return;
+        }
+
+        // Step 1 & 2 — Parse and categorize
+        Dictionary<string, List<Show>> schedule = new Dictionary<string, List<Show>>();
+        List<string> knownCategories = new List<string> { "Movie", "Series", "Anime", "Cartoon" };
+        string currentCategory = "";
+        string[] lines = File.ReadAllLines(file);
+
+        foreach (string line in lines)
+        {
+            string trimmed = line.Trim();
+
+            if (trimmed.StartsWith("#"))
+            {
+                currentCategory = trimmed.Replace("#", "").Trim();
+                schedule[currentCategory] = new List<Show>();
+            }
+            else if (knownCategories.Contains(trimmed))
+            {
+                currentCategory = trimmed;
+                schedule[currentCategory] = new List<Show>();
+            }
+            else if (trimmed != "")
+            {
+                if (currentCategory != "")
+                {
+                    string[] parts = trimmed.Split(',');
+                    Show myShow = new Show()
+                    {
+                        Name = parts[0].Trim(),
+                        EpisodeLength = int.Parse(parts[1].Trim())
+                    };
+                    schedule[currentCategory].Add(myShow);
+                }
+                else
+                {
+                    Console.WriteLine($"Warning: '{trimmed}' has no category, skipping!");
+                }
+            }
+        }
+
+        // Step 3 — Separate series and movies
+        List<Show> seriesShows = new List<Show>();
+        List<Show> movieShows = new List<Show>();
+
+        foreach (var category in schedule)
+        {
+            if (category.Key != "Movie")
+                seriesShows.AddRange(category.Value);
+            else if (category.Key == "Movie")
+                movieShows.AddRange(category.Value);
+        }
+
+        // Step 4 — Fixed vs Alternating
+        // Display series list
+        Console.WriteLine("=== Your Series ===");
+        int counter = 1;
+        foreach (Show show in seriesShows)
+        {
+            Console.WriteLine($"{counter}. {show.Name} ({show.EpisodeLength} mins)");
+            counter++;
+        }
+
+        // User picks fixed series
+        Console.WriteLine("\nPick 2 fixed series (enter numbers separated by comma e.g 1,2):");
+        string input = Console.ReadLine();
+        string[] picked = input.Split(',');
+
+        List<Show> fixedSeries = new List<Show>();
+        foreach (string part in picked)
+        {
+            int index = int.Parse(part.Trim()) - 1;
+            fixedSeries.Add(seriesShows[index]);
+        }
+
+        // Build alternating list
+        List<Show> alternatingSeries = new List<Show>();
+        foreach (Show show in seriesShows)
+        {
+            if (!fixedSeries.Contains(show))
+                alternatingSeries.Add(show);
+        }
+
+        // Assign to weekly schedule
+        SortedDictionary<DayOfWeek, Show> weeklySchedule = new SortedDictionary<DayOfWeek, Show>();
+
+        // Fixed series
+        weeklySchedule[DayOfWeek.Monday] = fixedSeries[0];
+        weeklySchedule[DayOfWeek.Tuesday] = fixedSeries[1];
+
+        // Alternating series
+        Random random = new Random();
+
+        int randomIndex = random.Next(0, alternatingSeries.Count);
+        weeklySchedule[DayOfWeek.Wednesday] = alternatingSeries[randomIndex];
+        alternatingSeries.RemoveAt(randomIndex);
+
+        randomIndex = random.Next(0, alternatingSeries.Count);
+        weeklySchedule[DayOfWeek.Thursday] = alternatingSeries[randomIndex];
+        alternatingSeries.RemoveAt(randomIndex);
+
+        // Assign movies
+        int movieIndex = 0;
+        List<DayOfWeek> movieDays = new List<DayOfWeek>
+        {
+            DayOfWeek.Friday,
+            DayOfWeek.Saturday,
+            DayOfWeek.Sunday
+        };
+
+        foreach (DayOfWeek day in movieDays)
+        {
+            if (movieIndex < movieShows.Count)
+            {
+                weeklySchedule[day] = movieShows[movieIndex];
+                movieIndex++;
+            }
+        }
+
+        // Print weekly schedule
+        Console.WriteLine("\n=== This Week's TV Schedule ===");
+        foreach (var entry in weeklySchedule)
+        {
+            Console.WriteLine($"{entry.Key} → {entry.Value.Name} ({entry.Value.EpisodeLength} mins)");
+        }
+    }
+}
+
+public class Show
+{
+    public string Name { get; set; }
+    public int EpisodeLength { get; set; }
+>>>>>>> e593893955e123c7b178ec647c3aebdc559432b7
 }

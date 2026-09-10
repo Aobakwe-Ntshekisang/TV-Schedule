@@ -1,0 +1,15 @@
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\bin\Debug\net8.0\TvSchedule.exe
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\bin\Debug\net8.0\TvSchedule.deps.json
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\bin\Debug\net8.0\TvSchedule.runtimeconfig.json
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\bin\Debug\net8.0\TvSchedule.dll
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\bin\Debug\net8.0\TvSchedule.pdb
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.AssemblyInfoInputs.cache
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.AssemblyInfo.cs
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.csproj.CoreCompileInputs.cache
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.sourcelink.json
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.dll
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\refint\TvSchedule.dll
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.pdb
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\TvSchedule.genruntimeconfig.cache
+C:\Users\Aobakwe Ntshekisang\Documents\TvSchedule\obj\Debug\net8.0\ref\TvSchedule.dll
