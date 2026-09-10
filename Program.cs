@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 
@@ -39,12 +39,19 @@ class TvSchedule
                 if (currentCategory != "")
                 {
                     string[] parts = trimmed.Split(',');
-                    Show myShow = new Show()
+                    if (parts.Length >= 2)
                     {
-                        Name = parts[0].Trim(),
-                        EpisodeLength = int.Parse(parts[1].Trim())
-                    };
-                    schedule[currentCategory].Add(myShow);
+                        Show myShow = new Show()
+                        {
+                            Name = parts[0].Trim(),
+                            EpisodeLength = int.Parse(parts[1].Trim())
+                        };
+                        schedule[currentCategory].Add(myShow);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning: '{trimmed}' has no episode length, skipping!");
+                    }
                 }
                 else
                 {
@@ -75,8 +82,20 @@ class TvSchedule
             counter++;
         }
 
-        // User picks fixed series
-        Console.WriteLine("\nPick 2 fixed series (enter numbers separated by comma e.g 1,2):");
+        // Tell user how many series they have
+        Console.WriteLine($"\nYou have {seriesShows.Count} series.");
+        Console.WriteLine("How many do you want as fixed? (1-2 recommended):");
+        int fixedCount = int.Parse(Console.ReadLine());
+
+        // Validate
+        if (fixedCount > seriesShows.Count)
+        {
+            Console.WriteLine($"You only have {seriesShows.Count} series! Setting fixed to {seriesShows.Count}");
+            fixedCount = seriesShows.Count;
+        }
+
+        // User picks
+        Console.WriteLine($"Pick {fixedCount} fixed series (enter numbers separated by comma):");
         string input = Console.ReadLine();
         string[] picked = input.Split(',');
 
@@ -100,18 +119,25 @@ class TvSchedule
 
         // Fixed series
         weeklySchedule[DayOfWeek.Monday] = fixedSeries[0];
-        weeklySchedule[DayOfWeek.Tuesday] = fixedSeries[1];
+        if (fixedSeries.Count > 1)
+            weeklySchedule[DayOfWeek.Tuesday] = fixedSeries[1];
 
         // Alternating series
         Random random = new Random();
 
-        int randomIndex = random.Next(0, alternatingSeries.Count);
-        weeklySchedule[DayOfWeek.Wednesday] = alternatingSeries[randomIndex];
-        alternatingSeries.RemoveAt(randomIndex);
+        if (alternatingSeries.Count > 0)
+        {
+            int randomIndex = random.Next(0, alternatingSeries.Count);
+            weeklySchedule[DayOfWeek.Wednesday] = alternatingSeries[randomIndex];
+            alternatingSeries.RemoveAt(randomIndex);
+        }
 
-        randomIndex = random.Next(0, alternatingSeries.Count);
-        weeklySchedule[DayOfWeek.Thursday] = alternatingSeries[randomIndex];
-        alternatingSeries.RemoveAt(randomIndex);
+        if (alternatingSeries.Count > 0)
+        {
+            int randomIndex = random.Next(0, alternatingSeries.Count);
+            weeklySchedule[DayOfWeek.Thursday] = alternatingSeries[randomIndex];
+            alternatingSeries.RemoveAt(randomIndex);
+        }
 
         // Assign movies
         int movieIndex = 0;
@@ -138,10 +164,4 @@ class TvSchedule
             Console.WriteLine($"{entry.Key} → {entry.Value.Name} ({entry.Value.EpisodeLength} mins)");
         }
     }
-}
-
-public class Show
-{
-    public string Name { get; set; }
-    public int EpisodeLength { get; set; }
 }

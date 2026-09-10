@@ -1,0 +1,9 @@
+# Movie
+Hurry Up Tomorrow, 90
+Flow, 100
+Black Bag, 118
+
+# Series
+Queen Charlotte S01, 60
+Grown-ish S05, 22
+Tulsa King S02, 55
