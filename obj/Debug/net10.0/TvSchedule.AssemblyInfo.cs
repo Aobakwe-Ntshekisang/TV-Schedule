@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TvSchedule")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9bfd12a0325b4e59b91993f1cb0e38768b1ff457")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+44ac555d3a8947f7938ed4d716bfd2800b085e5d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TvSchedule")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TvSchedule")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

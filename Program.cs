@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
 
 class TvSchedule
 {
@@ -13,6 +14,10 @@ class TvSchedule
             Console.WriteLine("File not found!");
             return;
         }
+
+        // Initialize history manager
+        HistoryManager historyManager = new HistoryManager();
+        historyManager.CreateDatabase();
 
         // Step 1 & 2 — Parse and categorize
         Dictionary<string, List<Show>> schedule = new Dictionary<string, List<Show>>();
@@ -72,8 +77,52 @@ class TvSchedule
                 movieShows.AddRange(category.Value);
         }
 
+        // Main menu loop
+        while (true)
+        {
+            Console.WriteLine("\n=== TV Schedule Manager ===");
+            Console.WriteLine("1. Generate weekly schedule");
+            Console.WriteLine("2. Add a show");
+            Console.WriteLine("3. Update a show");
+            Console.WriteLine("4. Delete a show");
+            Console.WriteLine("5. View history");
+            Console.WriteLine("6. Exit");
+            Console.Write("Enter your selection: ");
+            string selection = Console.ReadLine();
+
+            switch (selection)
+            {
+                case "1":
+                    GenerateSchedule(seriesShows, movieShows, schedule, historyManager);
+                    break;
+                case "2":
+                    // Add a show (coming soon)
+                    Console.WriteLine("Coming soon!");
+                    break;
+                case "3":
+                    // Update a show (coming soon)
+                    Console.WriteLine("Coming soon!");
+                    break;
+                case "4":
+                    // Delete a show (coming soon)
+                    Console.WriteLine("Coming soon!");
+                    break;
+                case "5":
+                    historyManager.ViewHistory();
+                    break;
+                case "6":
+                    Console.WriteLine("Goodbye!");
+                    return;
+                default:
+                    Console.WriteLine("Invalid selection, try again!");
+                    break;
+            }
+        }
+    }
+
+    static void GenerateSchedule(List<Show> seriesShows, List<Show> movieShows, Dictionary<string, List<Show>> schedule, HistoryManager historyManager)
+    {
         // Step 4 — Fixed vs Alternating
-        // Display series list
         Console.WriteLine("=== Your Series ===");
         int counter = 1;
         foreach (Show show in seriesShows)
@@ -82,19 +131,16 @@ class TvSchedule
             counter++;
         }
 
-        // Tell user how many series they have
         Console.WriteLine($"\nYou have {seriesShows.Count} series.");
         Console.WriteLine("How many do you want as fixed? (1-2 recommended):");
         int fixedCount = int.Parse(Console.ReadLine());
 
-        // Validate
         if (fixedCount > seriesShows.Count)
         {
             Console.WriteLine($"You only have {seriesShows.Count} series! Setting fixed to {seriesShows.Count}");
             fixedCount = seriesShows.Count;
         }
 
-        // User picks
         Console.WriteLine($"Pick {fixedCount} fixed series (enter numbers separated by comma):");
         string input = Console.ReadLine();
         string[] picked = input.Split(',');
@@ -106,7 +152,6 @@ class TvSchedule
             fixedSeries.Add(seriesShows[index]);
         }
 
-        // Build alternating list
         List<Show> alternatingSeries = new List<Show>();
         foreach (Show show in seriesShows)
         {
@@ -114,15 +159,12 @@ class TvSchedule
                 alternatingSeries.Add(show);
         }
 
-        // Assign to weekly schedule
         SortedDictionary<DayOfWeek, Show> weeklySchedule = new SortedDictionary<DayOfWeek, Show>();
 
-        // Fixed series
         weeklySchedule[DayOfWeek.Monday] = fixedSeries[0];
         if (fixedSeries.Count > 1)
             weeklySchedule[DayOfWeek.Tuesday] = fixedSeries[1];
 
-        // Alternating series
         Random random = new Random();
 
         if (alternatingSeries.Count > 0)
@@ -139,7 +181,6 @@ class TvSchedule
             alternatingSeries.RemoveAt(randomIndex);
         }
 
-        // Assign movies
         int movieIndex = 0;
         List<DayOfWeek> movieDays = new List<DayOfWeek>
         {
@@ -163,5 +204,25 @@ class TvSchedule
         {
             Console.WriteLine($"{entry.Key} → {entry.Value.Name} ({entry.Value.EpisodeLength} mins)");
         }
+
+        // Step 5 — History
+        Console.WriteLine("\nHow many weeks before a show can repeat? (default: 4):");
+        string weeksInput = Console.ReadLine();
+        int weeks = string.IsNullOrEmpty(weeksInput) ? 4 : int.Parse(weeksInput);
+
+        historyManager.CheckRepeats(weeklySchedule, weeks);
+
+        // Build category map
+        Dictionary<DayOfWeek, string> categoryMap = new Dictionary<DayOfWeek, string>();
+        foreach (var entry in weeklySchedule)
+        {
+            foreach (var cat in schedule)
+            {
+                if (cat.Value.Contains(entry.Value))
+                    categoryMap[entry.Key] = cat.Key;
+            }
+        }
+
+        historyManager.SaveSchedule(weeklySchedule, categoryMap);
     }
 }

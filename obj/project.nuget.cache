@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "E6F/ohqBJD0=",
+  "dgSpecHash": "HsJeB2Fr0sU=",
   "success": true,
   "projectFilePath": "C:\\Users\\Aobakwe Ntshekisang\\Documents\\TvSchedule\\TvSchedule.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\microsoft.data.sqlite\\10.0.14\\microsoft.data.sqlite.10.0.14.nupkg.sha512",
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\microsoft.data.sqlite.core\\10.0.14\\microsoft.data.sqlite.core.10.0.14.nupkg.sha512",
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.13\\sqlitepclraw.bundle_e_sqlite3.2.1.13.nupkg.sha512",
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\sqlitepclraw.core\\2.1.13\\sqlitepclraw.core.2.1.13.nupkg.sha512",
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.13\\sqlitepclraw.lib.e_sqlite3.2.1.13.nupkg.sha512",
+    "C:\\Users\\Aobakwe Ntshekisang\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.13\\sqlitepclraw.provider.e_sqlite3.2.1.13.nupkg.sha512"
+  ],
   "logs": []
 }
