@@ -4,6 +4,14 @@ using Microsoft.Data.Sqlite;
 
 public class HistoryManager
 {
+    // Helper method to get the actual date of a day this week
+    private DateTime GetNextWeekday(DayOfWeek day)
+    {
+        DateTime today = DateTime.Now;
+        int daysUntil = ((int)day - (int)today.DayOfWeek + 7) % 7;
+        return today.AddDays(daysUntil == 0 ? 7 : daysUntil);
+    }
+
     // Create database and table
     public void CreateDatabase()
     {
@@ -39,7 +47,8 @@ public class HistoryManager
                 INSERT INTO History (Date, ShowName, Category, EpisodeLength) 
                 VALUES ($date, $showName, $category, $episodeLength)";
 
-            command.Parameters.AddWithValue("$date", DateTime.Now.ToString("yyyy-MM-dd"));
+            // Use actual air date instead of today
+            command.Parameters.AddWithValue("$date", GetNextWeekday(entry.Key).ToString("yyyy-MM-dd"));
             command.Parameters.AddWithValue("$showName", entry.Value.Name);
             command.Parameters.AddWithValue("$category", category);
             command.Parameters.AddWithValue("$episodeLength", entry.Value.EpisodeLength);
@@ -95,7 +104,7 @@ public class HistoryManager
         connection.Open();
 
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM History ORDER BY Date DESC";
+        command.CommandText = "SELECT * FROM History ORDER BY Date ASC";
 
         var reader = command.ExecuteReader();
 
